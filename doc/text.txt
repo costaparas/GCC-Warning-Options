@@ -1,0 +1,87 @@
+# The GCC warning flags every C programmer should know about
+
+Any C programmer who has used [GCC](https://gcc.gnu.org/) would be familiar with at least some basic compilation flags designed to help them write correct and robust code.
+
+For decades, many have used warning options such as `-Wall`, `-Wextra` and even `-Wpedantic` to help identify trivial and not-so-trivial problems in their programs. But this isn't the full story...
+
+GGC is very powerful, and offers a [wide range](https://gcc.gnu.org/onlinedocs/gcc/#toc-GCC-Command-Options) of compilation options. An understanding of GCC's vast range of options enables a programmer to tailor their debugging experience, customize the optimization of their code on a granular level, adjust low-level machine-specific features and a whole lot more.
+
+But my focus will be on the [warning options](https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html) that GCC provides, of which there are many. And so, to limit the scope, some of the familiar "mainstream" options will be explored only at a high-level, while the less-known ones will be given their chance to shine.
+
+## What are the essentials?
+
+Good C programmers would be aware of (and hopefully use) at least `-Wall` and `-Wextra`, as well as specify an appropriate level of optimization (such as `-O2` or `-O3`) to further expand the range of warnings reported.
+
+[Optimization](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html#Optimize-Options) is quite an interesting topic in its own right, and the reason its relevant for generating compiler warnings at all is made explicit in GCC's own manual page:
+
+> The effectiveness of some warnings depends on optimizations also being enabled.
+
+### Sidetrack on Optimization
+
+If the importance of optimization to generating useful warnings is not clear, then consider the following very simple C program containing an obvious fencepost error.
+
+[fencepost.c]
+
+Regardless of the warning options enabled, unless the code is run through optimization, there will be absolutely no warning issued about the fencepost error.
+
+Compiling with:
+
+```
+gcc -O2 fencepost.c
+```
+
+would generate a warning thanks to GCC's loop optimizations, which would otherwise not have been performed.
+
+### `-Wall`, `-Wextra` and `-Werror`
+
+The naming of `-Wall` always seemed misleading to me. It certainly does not enable "all" warnings, but rather, a large selection of useful ones. From GCC's own manual page, `-Wall` "enables all the warnings about constructions that some users consider questionable, and that are easy to avoid." So in other words, `-Wall` enables warnings which *good* programmers would consider useful in identifying likely problems in their code.
+
+I won't delve deeper into the warnings enabled by `-Wall`, since there are quite a few, and it would be counter-productive given that many are surely accustomed to these warnings.
+
+Meanwhile, `-Wextra` (formerly `-W`) will enable several additional warnings, not enabled by `-Wall`. For example, `-Wunused-parameter`, `-Wsign-compare`, `-Wtype-limits` and `-Wmissing-field-initializers` to name a few. Though perfectly valid code may fail to compile under `-Wextra` (the same can actually be said for `-Wall`), well-written code should generally not have a problem.
+
+Let us explore one such warning option enabled by `-Wextra` in-depth, the well-known `-Wunused-parameter`.
+
+[unused_parameter.c]
+
+I'd personally recommend `-Werror` as well. Something about turning all warnings into "errors" tends to be more convincing that something is definitely wrong. It of course has the effect of preventing a buggy binary from being created altogether. Suffice it to say, if the code can't compile under `-Wall` and `-Wextra`, then you are probably doing something very wrong.
+
+## What if you want to be pedantic?
+
+Somewhat more controversial is the `-Wpedantic` (equivalently, `-pedantic`) option. If portability is essential (in my opinion, this should always be the case), then so too is `-Wpedantic`. There are of course additional diagnostics reported due to `-Wpedantic`---things that simply would not be detected with `-Wall` and `-Wextra`, and this can be helpful for catching more subtle problems.
+
+The true purpose of `-Wpedantic` has always been to issue all warnings demanded by strict ISO C. The caveat however, is that it does not guarantee strict ISO C compliance. From GCC's own manual page `-Wpedantic` "finds some non-ISO practices, but not all---only those for which ISO C *requires* a diagnostic, and some others for which diagnostics have been added."
+
+Frequently, warnings reported by `-Wpedantic` are turned into errors under `-Werror`, but this is not always the case. As explained in GCC's own manual page, the use of `-pedantic-errors` does do this, but it "is not equivalent to `-Werror=pedantic`, since there are errors enabled by this option and not enabled by the latter and vice versa."
+
+## Compiling against a standard
+
+In the context of warning options, it is relevant to mention GCC's `-std=` flag for specifying a C standard. If unspecified, the *default standard used will vary* depending on the compiler's version. In [GCC Version 5](https://gcc.gnu.org/onlinedocs/gcc-5.1.0/gcc/C-Dialect-Options.html#C-Dialect-Options), the default standard used was changed from `-std=gnu90` to `-std=gnu11`. The default then changed to `-std=gnu17` with the release of [GCC Version 8](https://gcc.gnu.org/onlinedocs/gcc-8.1.0/gcc/C-Dialect-Options.html#C-Dialect-Options). Since the default may change as new standards emerge, it is therefore advisable to *always specify a standard* when compiling.
+
+Notice also, that the default standard used by GCC is the GNU dialect of the corresponding ISO C standard. Such standards support GNU extensions, which are not ISO-conformant. Compiling with a corresponding *base standard*, such as `-std=c99` or `-std=c11` would avoid GNU extensions altogether. In particular, `-Wpedantic` and `-pedantic-errors` will use the *base standard* to determine which warnings/errors ought to be issued.
+
+## What other warning flags exist?
+
+Anyone who has seen GCC's manual page will be aware of its length and will have noticed the plethora of available options.
+
+Even with all of the above-mentioned flags, not all available warnings would be triggered. On the other hand, to issue all possible warnings would probably not be particularly practical to attempt. There are indeed valid and correct C programs that would fail to compile with certain options enabled---indeed, even some well-known libraries.
+
+However, it is worth considering some additional warning flags that GCC has to offer, and enabling them alongside those already mentioned.
+
+After all, the primary goal of these warning flags is to help you write better programs.
+
+What follows is an exploration of a selection of less-commonly known warning options available in GCC---those which are not enabled by any of the above-mentioned options.
+
+Their purpose is explained, along with corresponding example(s).
+
+[...]
+
+---
+
+The content on this page applies to [GCC Version 7](https://gcc.gnu.org/gcc-7/) and above. Earlier versions do not support all the mentioned options, and there may be slight variations with some of those that are supported.
+
+---
+
+The original sources are available on [GitHub](https://github.com/costaparas/GCC-Warning-Options).
+
+*Please consider the environment before printing.*
