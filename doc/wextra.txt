@@ -1,0 +1,17 @@
+-Wclobbered
+-Wcast-function-type
+-Wdeprecated-copy
+-Wempty-body
+-Wignored-qualifiers
+-Wimplicit-fallthrough=3
+-Wmissing-field-initializers
+-Wmissing-parameter-type
+-Wold-style-declaration
+-Woverride-init
+-Wsign-compare
+-Wredundant-move
+-Wtype-limits
+-Wuninitialized
+-Wshift-negative-value
+-Wunused-parameter
+-Wunused-but-set-parameter
